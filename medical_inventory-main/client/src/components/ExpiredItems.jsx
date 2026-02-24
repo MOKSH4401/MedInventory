@@ -8,8 +8,8 @@ const ExpiredItems = () => {
   useEffect(() => {
     const fetchExpiredItems = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/expired-items");
-        setExpiredItems(response.data);
+        const { data } = await axios.get("http://localhost:5000/api/expired/history");
+        setExpiredItems(data);
       } catch (error) {
         console.error("Error fetching expired items:", error);
       }
@@ -26,8 +26,8 @@ const ExpiredItems = () => {
       <div className=" p-6 rounded-lg border-1 border-red-400 shadow flex items-center space-x-4">
         <AlertTriangle className="w-10 h-10 text-red-400 dark:text-red-400" />
         <div>
-          <p className="text-gray-300 dark:text-gray-300">Total Expired Items</p>
-          <p className="text-2xl font-bold text-red-100 dark:text-red-100">{expiredItems.length}</p>
+          <p className="text-gray-600 dark:text-gray-300">Total Expired Items</p>
+          <p className="text-2xl font-bold text-red-600 dark:text-red-100">{expiredItems.length}</p>
         </div>
       </div>
 
@@ -53,7 +53,7 @@ const ExpiredItems = () => {
                 </tr>
               </thead>
               <tbody>
-                {expiredItems.map((item, index) => (
+                {expiredItems.map((item) => (
                   <tr
                     key={item._id}
                     className={`border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}

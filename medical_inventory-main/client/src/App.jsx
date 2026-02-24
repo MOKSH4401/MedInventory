@@ -9,6 +9,7 @@ import ProductDetails from "./pages/ProductDetails";
 import CartPage from "./pages/CartPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCoupons from "./pages/AdminCoupons";
+import ExpiredMedicines from "./pages/ExpiredMedicines";
 import Reports from "./pages/Reports";
 import PredictionReports from "./pages/PredictionReports";
 import DemandPrediction from "./pages/DemandPrediction";
@@ -31,6 +32,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/coupons" element={<AdminCoupons />} />
+            <Route path="/admin/expired-medicines" element={<ExpiredMedicines />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/predictions" element={<PredictionReports />} />
             <Route path="/demand-prediction" element={<DemandPrediction />} />

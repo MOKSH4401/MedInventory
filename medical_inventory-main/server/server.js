@@ -12,7 +12,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes.js");
 const reportRoutes = require("./routes/reportRoutes.js");
 const predictionRoutes = require("./routes/predictionRoutes.js");
 const mlRoutes = require("./routes/mlRoutes.js");
-const { moveExpiredItems } = require("./controllers/expiredItemController.js");
+const { markExpiredMedicines } = require("./controllers/expiredController.js");
 
 dotenv.config();
 const app = express();
@@ -30,10 +30,15 @@ app.use(express.json({ limit: "50mb" }));  // Allows JSON request body parsing
 app.use(express.urlencoded({ extended: true }));  // Allows URL-encoded form data
 app.use("/uploads", express.static("uploads"));// Serve static files for uploaded images
 
-// Run this function every day at midnight (00:00)
-cron.schedule("0 0 * * *", () => {
-  console.log("Checking for expired items...");
-  moveExpiredItems();
+// Run this function every day at midnight (00:00) – mark expired medicines
+cron.schedule("0 0 * * *", async () => {
+  console.log("Checking for expired medicines...");
+  try {
+    await markExpiredMedicines();
+    console.log("Expired medicines marked.");
+  } catch (err) {
+    console.error("Error marking expired medicines:", err);
+  }
 });
 
 //  Connect to MongoDB
@@ -46,7 +51,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes (remove duplicate cart routes)
 app.use("/api/cart", cartRoutes);
-app.use("/api/expired-items", expiredRoutes);
+app.use("/api/expired", expiredRoutes);
 app.use("/api/items", itemsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/coupons", couponRoutes);

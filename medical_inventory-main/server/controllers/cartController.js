@@ -61,6 +61,11 @@ const addToCart = async (req, res) => {
       return res.status(404).json({ message: "Item not found" });
     }
 
+    // Prevent adding expired medicine to cart
+    if (item.expiryDate && item.expiryDate < new Date()) {
+      return res.status(400).json({ message: "Cannot add expired medicine" });
+    }
+
     // Check stock
     if (item.quantity < quantity) {
       return res.status(400).json({ message: "Not enough stock available" });

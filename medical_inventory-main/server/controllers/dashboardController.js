@@ -36,7 +36,10 @@ const getDashboardAnalytics = async (req, res) => {
         { $project: { _id: 0, total: 1 } },
       ]),
       PurchaseHistory.countDocuments(),
-      Item.find({ quantity: { $lte: 10 } })
+      Item.find({
+        quantity: { $lte: 10 },
+        $or: [{ isDiscarded: false }, { isDiscarded: { $exists: false } }],
+      })
         .select("name quantity price image")
         .lean(),
       PurchaseHistory.aggregate([

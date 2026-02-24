@@ -131,7 +131,9 @@ const getProfitReport = async (req, res) => {
  */
 const getInventoryReport = async (req, res) => {
   try {
-    const items = await Item.find().lean();
+    const items = await Item.find({
+      $or: [{ isDiscarded: false }, { isDiscarded: { $exists: false } }],
+    }).lean();
     const totalItems = items.length;
     const totalStock = items.reduce((sum, i) => sum + (i.quantity || 0), 0);
     const minStockLevel = (v) => v ?? 10;

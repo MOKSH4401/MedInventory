@@ -1,10 +1,12 @@
 const Item = require("../models/Item");
 
+// Exclude discarded items from inventory, products, and counts
+const notDiscardedFilter = { $or: [{ isDiscarded: false }, { isDiscarded: { $exists: false } }] };
 
-// Get all items
+// Get all items (excludes discarded so they don't show in inventory, products, or total count)
 const getItems = async (req, res) => {
   try {
-    const items = await Item.find();
+    const items = await Item.find(notDiscardedFilter);
     res.json(items);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -84,11 +86,12 @@ const deleteItem = async (req, res) => {
   }
 };
 
-// get single item by id
+// get single item by id (discarded items return 404 so they don't show on product page)
 const getsingleitem = async (req, res) => {
   try {
     const item = await Item.findById(req.params.id);
     if (!item) return res.status(404).json({ message: "Item not found" });
+    if (item.isDiscarded === true) return res.status(404).json({ message: "Item not found" });
     res.json(item);
   } catch (err) {
     res.status(500).json({ error: err.message });
