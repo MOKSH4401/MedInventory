@@ -24,12 +24,12 @@ const Sidebar = () => {
         >
           <Tag className="w-5 h-5" /> Coupons
         </Link>
-        <Link 
+        {/* <Link 
           to="/admin/expired-medicines" 
           className="flex items-center gap-2 p-3 rounded-lg transition-all hover:text-blue-700"
         >
           <AlertTriangle className="w-5 h-5" /> Expired Medicines
-        </Link>
+        </Link> */}
         <Link 
           to="/reports" 
           className="flex items-center gap-2 p-3 rounded-lg transition-all hover:text-blue-700"
