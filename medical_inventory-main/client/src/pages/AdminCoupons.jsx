@@ -4,6 +4,16 @@ import { toast } from "react-toastify";
 
 const API_BASE = "http://localhost:5000/api";
 
+const toDateInputValue = (dateLike) => {
+  if (!dateLike) return "";
+  const d = new Date(dateLike);
+  if (Number.isNaN(d.getTime())) return "";
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +24,14 @@ const AdminCoupons = () => {
     minPurchaseAmount: "",
     maxDiscountAmount: "",
     expiryDate: "",
+  });
+
+  const [expiryModal, setExpiryModal] = useState({
+    open: false,
+    mode: "edit", // "edit" | "reactivate"
+    coupon: null,
+    expiryDate: "",
+    saving: false,
   });
 
   const fetchCoupons = async () => {
@@ -38,6 +56,25 @@ const AdminCoupons = () => {
     setForm((prev) => ({
       ...prev,
       [name]: name === "code" ? value.toUpperCase() : value,
+    }));
+  };
+
+  const openExpiryModal = (mode, coupon) => {
+    setExpiryModal({
+      open: true,
+      mode,
+      coupon,
+      expiryDate: toDateInputValue(coupon?.expiryDate),
+      saving: false,
+    });
+  };
+
+  const closeExpiryModal = () => {
+    setExpiryModal((prev) => ({
+      ...prev,
+      open: false,
+      coupon: null,
+      saving: false,
     }));
   };
 
@@ -81,6 +118,41 @@ const AdminCoupons = () => {
     } catch (error) {
       console.error("Deactivate coupon error:", error);
       toast.error("Failed to deactivate coupon");
+    }
+  };
+
+  const handleReactivate = async (id, expiryDate) => {
+    await axios.put(`${API_BASE}/coupons/${id}/reactivate`, {
+      expiryDate: expiryDate || null,
+    });
+  };
+
+  const handleUpdateExpiry = async (id, expiryDate) => {
+    await axios.put(`${API_BASE}/coupons/${id}/expiry`, {
+      expiryDate: expiryDate || null,
+    });
+  };
+
+  const handleSaveExpiryModal = async () => {
+    const coupon = expiryModal.coupon;
+    if (!coupon?._id) return;
+
+    try {
+      setExpiryModal((prev) => ({ ...prev, saving: true }));
+      if (expiryModal.mode === "reactivate") {
+        await handleReactivate(coupon._id, expiryModal.expiryDate);
+        toast.success("Coupon reactivated");
+      } else {
+        await handleUpdateExpiry(coupon._id, expiryModal.expiryDate);
+        toast.success("Expiry date updated");
+      }
+      fetchCoupons();
+      closeExpiryModal();
+    } catch (error) {
+      console.error("Coupon update error:", error);
+      toast.error(error.response?.data?.message || "Action failed");
+    } finally {
+      setExpiryModal((prev) => ({ ...prev, saving: false }));
     }
   };
 
@@ -204,14 +276,30 @@ const AdminCoupons = () => {
                       )}
                     </td>
                     <td className="p-2 text-right">
-                      {c.isActive && (
+                      <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => handleDeactivate(c._id)}
-                          className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                          onClick={() => openExpiryModal("edit", c)}
+                          className="px-3 py-1 text-xs bg-gray-100 text-gray-800 rounded hover:bg-gray-200 border"
                         >
-                          Deactivate
+                          Edit Expiry
                         </button>
-                      )}
+
+                        {c.isActive ? (
+                          <button
+                            onClick={() => handleDeactivate(c._id)}
+                            className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                          >
+                            Deactivate
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => openExpiryModal("reactivate", c)}
+                            className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            Reactivate
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -220,6 +308,58 @@ const AdminCoupons = () => {
           </div>
         )}
       </div>
+
+      {expiryModal.open && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
+          <div className="w-full max-w-md bg-white rounded-lg shadow-lg border">
+            <div className="p-4 border-b">
+              <h3 className="text-lg font-semibold">
+                {expiryModal.mode === "reactivate"
+                  ? "Reactivate Coupon"
+                  : "Edit Expiry Date"}
+              </h3>
+              <p className="text-sm text-gray-600">
+                Coupon:{" "}
+                <span className="font-semibold">{expiryModal.coupon?.code}</span>
+              </p>
+            </div>
+
+            <div className="p-4 space-y-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Expiry date (optional)
+              </label>
+              <input
+                type="date"
+                value={expiryModal.expiryDate}
+                onChange={(e) =>
+                  setExpiryModal((prev) => ({ ...prev, expiryDate: e.target.value }))
+                }
+                className="w-full p-2 border rounded"
+              />
+              <p className="text-xs text-gray-500">Leave empty to remove expiry.</p>
+            </div>
+
+            <div className="p-4 border-t flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={closeExpiryModal}
+                className="px-4 py-2 rounded border bg-white hover:bg-gray-50"
+                disabled={expiryModal.saving}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveExpiryModal}
+                className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+                disabled={expiryModal.saving}
+              >
+                {expiryModal.saving ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

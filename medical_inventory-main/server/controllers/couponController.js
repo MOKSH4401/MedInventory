@@ -132,11 +132,77 @@ const deactivateCoupon = async (req, res) => {
   }
 };
 
+// PUT /api/coupons/:id/reactivate
+// Optionally accepts { expiryDate } (ISO string or YYYY-MM-DD). Use null/"" to clear.
+const reactivateCoupon = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { expiryDate } = req.body || {};
+
+    const update = { isActive: true };
+    if (expiryDate !== undefined) {
+      if (expiryDate === null || expiryDate === "") {
+        update.expiryDate = undefined;
+      } else {
+        const d = new Date(expiryDate);
+        if (Number.isNaN(d.getTime())) {
+          return res.status(400).json({ message: "Invalid expiryDate" });
+        }
+        update.expiryDate = d;
+      }
+    }
+
+    const coupon = await Coupon.findByIdAndUpdate(id, update, { new: true });
+    if (!coupon) {
+      return res.status(404).json({ message: "Coupon not found" });
+    }
+    res.json(coupon);
+  } catch (error) {
+    console.error("Reactivate coupon error:", error);
+    res.status(500).json({ message: "Failed to reactivate coupon" });
+  }
+};
+
+// PUT /api/coupons/:id/expiry
+// Accepts { expiryDate } (ISO string or YYYY-MM-DD). Use null/"" to clear.
+const updateCouponExpiry = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { expiryDate } = req.body || {};
+
+    if (expiryDate === undefined) {
+      return res.status(400).json({ message: "expiryDate is required" });
+    }
+
+    const update = {};
+    if (expiryDate === null || expiryDate === "") {
+      update.expiryDate = undefined;
+    } else {
+      const d = new Date(expiryDate);
+      if (Number.isNaN(d.getTime())) {
+        return res.status(400).json({ message: "Invalid expiryDate" });
+      }
+      update.expiryDate = d;
+    }
+
+    const coupon = await Coupon.findByIdAndUpdate(id, update, { new: true });
+    if (!coupon) {
+      return res.status(404).json({ message: "Coupon not found" });
+    }
+    res.json(coupon);
+  } catch (error) {
+    console.error("Update coupon expiry error:", error);
+    res.status(500).json({ message: "Failed to update coupon expiry" });
+  }
+};
+
 module.exports = {
   createCoupon,
   getAllCoupons,
   validateCoupon,
   deactivateCoupon,
+  reactivateCoupon,
+  updateCouponExpiry,
   computeDiscount,
 };
 
