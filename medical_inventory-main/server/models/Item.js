@@ -6,7 +6,7 @@ const itemSchema = new mongoose.Schema(
     quantity: { type: Number, required: true },
     expiryDate: { type: Date, required: true },
     price: { type: Number, required: true },
-    costPrice: { type: Number, default: 0 },
+    costPrice: { type: Number, required: true, default: 0 },
     minStockLevel: { type: Number, default: 10 },
     details: { type: String },
     moreDetails: { type: String },

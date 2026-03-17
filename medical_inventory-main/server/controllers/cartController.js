@@ -94,6 +94,7 @@ const addToCart = async (req, res) => {
         name: item.name,
         quantity: parseInt(quantity),
         price: item.price,
+        costPrice: item.costPrice,
         image: item.image
       });
     }
@@ -199,6 +200,7 @@ const checkout = async (req, res) => {
         itemName: item.name,
         quantity: item.quantity,
         price: item.price,
+        costPrice: item.costPrice,
         totalAmount: lineTotal,
         discountAmount: lineDiscount,
         finalAmount: lineFinal,
@@ -347,6 +349,7 @@ const verifyRazorpayPayment = async (req, res) => {
         itemName: item.name,
         quantity: item.quantity,
         price: item.price,
+        costPrice: item.costPrice,
         totalAmount: lineTotal,
         discountAmount: lineDiscount,
         finalAmount: lineFinal,

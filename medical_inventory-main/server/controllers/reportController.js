@@ -65,52 +65,41 @@ const getSalesReport = async (req, res) => {
 
 /**
  * GET /api/reports/profit
- * totalRevenue (gross), totalDiscountGiven, netRevenue from PurchaseHistory
- * totalCost from quantity * Item.costPrice
+ * Profit & Loss:
+ * totalCost = sum(costPrice * quantity)
+ * totalRevenue = sum(totalAmount)
+ * totalDiscountGiven = sum(discountAmount)
+ * netRevenue = totalRevenue - totalDiscountGiven
+ * totalProfit = netRevenue - totalCost
+ *
+ * Old PurchaseHistory records may miss costPrice/discountAmount.
  */
 const getProfitReport = async (req, res) => {
   try {
-    const revenueResult = await PurchaseHistory.aggregate([
+    const result = await PurchaseHistory.aggregate([
       {
         $group: {
           _id: null,
-          totalRevenue: { $sum: "$totalAmount" },
-          totalDiscountGiven: {
-            $sum: { $ifNull: ["$discountAmount", 0] },
-          },
-          netRevenue: {
-            $sum: { $ifNull: ["$finalAmount", "$totalAmount"] },
+          totalRevenue: { $sum: { $ifNull: ["$totalAmount", 0] } },
+          totalDiscountGiven: { $sum: { $ifNull: ["$discountAmount", 0] } },
+          totalCost: {
+            $sum: {
+              $multiply: [
+                { $ifNull: ["$costPrice", 0] },
+                { $ifNull: ["$quantity", 0] },
+              ],
+            },
           },
         },
       },
       { $project: { _id: 0 } },
     ]);
-    const rev = revenueResult[0] || {};
-    const totalRevenue = rev.totalRevenue ?? 0;
-    const totalDiscountGiven = rev.totalDiscountGiven ?? 0;
-    const netRevenue = rev.netRevenue ?? totalRevenue;
 
-    const costResult = await PurchaseHistory.aggregate([
-      {
-        $lookup: {
-          from: "items",
-          localField: "itemId",
-          foreignField: "_id",
-          as: "item",
-        },
-      },
-      { $unwind: { path: "$item", preserveNullAndEmptyArrays: true } },
-      {
-        $project: {
-          cost: {
-            $multiply: ["$quantity", { $ifNull: ["$item.costPrice", 0] }],
-          },
-        },
-      },
-      { $group: { _id: null, totalCost: { $sum: "$cost" } } },
-      { $project: { _id: 0 } },
-    ]);
-    const totalCost = costResult[0]?.totalCost ?? 0;
+    const totals = result[0] || {};
+    const totalRevenue = totals.totalRevenue || 0;
+    const totalDiscountGiven = totals.totalDiscountGiven || 0;
+    const totalCost = totals.totalCost || 0;
+    const netRevenue = totalRevenue - totalDiscountGiven;
     const totalProfit = netRevenue - totalCost;
 
     res.json({

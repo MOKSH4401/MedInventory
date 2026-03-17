@@ -5,6 +5,7 @@ const PurchaseHistorySchema = new mongoose.Schema({
   itemName: String,
   quantity: Number,
   price: Number,
+  costPrice: Number, // cost at time of purchase (fallbacks handled in report)
   totalAmount: Number, // line total before discount
   discountAmount: { type: Number, default: 0 },
   finalAmount: Number, // line total after discount
