@@ -78,6 +78,15 @@ const getProfitReport = async (req, res) => {
   try {
     const result = await PurchaseHistory.aggregate([
       {
+        $lookup: {
+          from: "items",
+          localField: "itemId",
+          foreignField: "_id",
+          as: "item",
+        },
+      },
+      { $unwind: { path: "$item", preserveNullAndEmptyArrays: true } },
+      {
         $group: {
           _id: null,
           totalRevenue: { $sum: { $ifNull: ["$totalAmount", 0] } },
@@ -85,7 +94,9 @@ const getProfitReport = async (req, res) => {
           totalCost: {
             $sum: {
               $multiply: [
-                { $ifNull: ["$costPrice", 0] },
+                {
+                  $ifNull: ["$costPrice", { $ifNull: ["$item.costPrice", 0] }],
+                },
                 { $ifNull: ["$quantity", 0] },
               ],
             },
