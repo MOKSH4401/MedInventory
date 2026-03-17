@@ -7,6 +7,7 @@ const itemSchema = new mongoose.Schema(
     expiryDate: { type: Date, required: true },
     price: { type: Number, required: true },
     costPrice: { type: Number, required: true, default: 0 },
+    supplierId: { type: mongoose.Schema.Types.ObjectId, ref: "Supplier" },
     minStockLevel: { type: Number, default: 10 },
     details: { type: String },
     moreDetails: { type: String },

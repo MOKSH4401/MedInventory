@@ -19,7 +19,7 @@ const createItem = async (req, res) => {
   console.log("Received File:", req.file);
 
    //  Extract form data properly
-  const { name, quantity, expiryDate,price,details,moreDetails } = req.body;
+  const { name, quantity, expiryDate, price, details, moreDetails, supplierId, costPrice } = req.body;
   const image = req.file ? `/uploads/${req.file.filename}` : null;
 
     //  Ensure required fields are present
@@ -28,7 +28,17 @@ const createItem = async (req, res) => {
     }
   
   try {
-    const newItem = new Item({ name, quantity, expiryDate,price,details,moreDetails,image});
+    const newItem = new Item({
+      name,
+      quantity,
+      expiryDate,
+      price,
+      details,
+      moreDetails,
+      image,
+      supplierId: supplierId || undefined,
+      costPrice: costPrice !== undefined && costPrice !== "" ? Number(costPrice) : 0,
+    });
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
@@ -58,13 +68,25 @@ const createItem = async (req, res) => {
 // Update an item (including image updates)
 const updateItem = async (req, res) => {
   const { id } = req.params;
-  const { name, quantity, expiryDate, price, details, moreDetails } = req.body;
+  const { name, quantity, expiryDate, price, details, moreDetails, supplierId, costPrice } = req.body;
   const image = req.file ? `/uploads/${req.file.filename}` : req.body.image; // ✅ Keep existing image if not updated
 
   try {
     const updatedItem = await Item.findByIdAndUpdate(
       id,
-      { name, quantity, expiryDate, price, details, moreDetails, image },
+      {
+        name,
+        quantity,
+        expiryDate,
+        price,
+        details,
+        moreDetails,
+        image,
+        supplierId: supplierId || undefined,
+        ...(costPrice !== undefined
+          ? { costPrice: costPrice === "" ? 0 : Number(costPrice) }
+          : {}),
+      },
       { new: true }
     );
 

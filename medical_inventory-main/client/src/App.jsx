@@ -13,6 +13,7 @@ import Reports from "./pages/Reports";
 import PredictionReports from "./pages/PredictionReports";
 import DemandPrediction from "./pages/DemandPrediction";
 import ScrollToTop from "./components/ScrollToTop";
+import Suppliers from "./pages/Suppliers";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/coupons" element={<AdminCoupons />} />
+            <Route path="/suppliers" element={<Suppliers />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/predictions" element={<PredictionReports />} />
             <Route path="/demand-prediction" element={<DemandPrediction />} />

@@ -2,13 +2,27 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useItems } from "../store/itemStore";
 
-
 const ItemsPage = () => {
   const {items,fetchItems} = useItems();
   // console.log(items);
 
-  const [item, setItem] = useState({ name: "", quantity: "", expiryDate: "",details:"",moreDetails:"",price:"",image:"" });
+  const [item, setItem] = useState({ name: "", quantity: "", expiryDate: "",details:"",moreDetails:"",price:"",costPrice:"",supplierId:"",image:"" });
   const [editingItemId, setEditingItemId] = useState(null);
+  const [suppliers, setSuppliers] = useState([]);
+
+  const fetchSuppliers = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/suppliers");
+      const data = await res.json();
+      setSuppliers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuppliers();
+  }, []);
 
   const handleChange = (e) => {
     setItem({ ...item, [e.target.name]: e.target.value });
@@ -24,6 +38,8 @@ const ItemsPage = () => {
     formData.append("details", item.details);
     formData.append("moreDetails", item.moreDetails);
     formData.append("price", item.price);
+    formData.append("costPrice", item.costPrice);
+    formData.append("supplierId", item.supplierId);
         
     if (item.image) {
       formData.append("image", item.image); // Append image file
@@ -48,12 +64,16 @@ const ItemsPage = () => {
       console.error(editingItemId ? "Error updating item:" : "Error adding item:", error);
       toast.error(editingItemId ? "Error updating item:" : "Error adding item:", error);
     }
-    setItem({ name: "", quantity: "", expiryDate: "",details:"",moreDetails:"",price:"",image:""});
+    setItem({ name: "", quantity: "", expiryDate: "",details:"",moreDetails:"",price:"",costPrice:"",supplierId:"",image:""});
     setEditingItemId(null);
   };
 
   const handleEdit = (item) => {
-    setItem(item);
+    setItem({
+      ...item,
+      costPrice: item.costPrice ?? "",
+      supplierId: item.supplierId ?? "",
+    });
     setEditingItemId(item._id);
     window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top smoothly
   };
@@ -164,6 +184,38 @@ const ItemsPage = () => {
         onChange={handleChange}
         className="w-2/3 p-3 rounded-lg  focus:ring-2 focus:ring-blue-500 focus:outline-none outline-1"
       />
+    </div>
+
+    {/* Cost Price */}
+    <div className="flex items-center gap-4">
+      <div className="w-1/3 text-sm font-medium text-gray-700 dark:text-white">Cost Price</div>
+      <input
+        type="number"
+        name="costPrice"
+        value={item.costPrice}
+        onChange={handleChange}
+        className="w-2/3 p-3 rounded-lg  focus:ring-2 focus:ring-blue-500 focus:outline-none outline-1"
+        min="0"
+        step="0.01"
+      />
+    </div>
+
+    {/* Supplier */}
+    <div className="flex items-center gap-4">
+      <div className="w-1/3 text-sm font-medium text-gray-700 dark:text-white">Supplier</div>
+      <select
+        name="supplierId"
+        value={item.supplierId || ""}
+        onChange={handleChange}
+        className="w-2/3 p-3 rounded-lg  focus:ring-2 focus:ring-blue-500 focus:outline-none outline-1 bg-white"
+      >
+        <option value="">Select supplier (optional)</option>
+        {suppliers.map((s) => (
+          <option key={s._id} value={s._id}>
+            {s.name}
+          </option>
+        ))}
+      </select>
     </div>
 
     {/* Item Details */}
