@@ -122,3 +122,45 @@ MedInventory is a full-stack **MERN-based Medical Pharmacy Inventory Management 
 ---
 
 ## 📁 Project Structure
+MedInventory/
+│
+├── client/ # React frontend
+├── server/ # Node.js backend
+├── ml-module/ # Python prediction module
+└── README.md
+
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone Repository
+```bash
+git clone https://github.com/your-username/MedInventory.git
+cd MedInventory
+
+2️⃣ Install Dependencies
+Backend
+cd server
+npm install
+Frontend
+cd client
+npm install
+
+3️⃣ Environment Variables
+Create a .env file in server/ and add:
+
+MONGO_URI=your_mongodb_connection
+RAZORPAY_KEY_ID=your_key
+RAZORPAY_KEY_SECRET=your_secret
+EMAIL_USER=your_email
+EMAIL_PASS=your_password
+SMS_API_KEY=your_sms_api_key
+
+4️⃣ Run the Project
+Start Backend
+cd server
+npm start
+Start Frontend
+cd client
+npm start
