@@ -164,3 +164,18 @@ npm start
 Start Frontend
 cd client
 npm start
+
+📸 Screenshots (Optional)
+
+Add screenshots of dashboard, analytics, checkout here
+
+🔮 Future Enhancements
+
+Multi-admin support
+Barcode scanning
+Mobile application
+Advanced AI prediction
+
+👨‍💻 Author
+
+MOKSH MANISHKUMAR SHAH
