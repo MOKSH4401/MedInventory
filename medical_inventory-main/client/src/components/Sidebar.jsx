@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, ShoppingBag, PlusCircle, Settings, Package, BarChart3, FileBarChart, TrendingUp, Brain, Tag, Truck, AlertTriangle } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, PlusCircle, Settings, Package, BarChart3, FileBarChart, TrendingUp, Brain, Tag, Truck, ReceiptText, AlertTriangle } from "lucide-react";
 
 const Sidebar = () => {
   return (
@@ -29,6 +29,12 @@ const Sidebar = () => {
           className="flex items-center gap-2 p-3 rounded-lg transition-all hover:text-blue-700"
         >
           <Truck className="w-5 h-5" /> Suppliers
+        </Link>
+        <Link 
+          to="/supplier-purchases" 
+          className="flex items-center gap-2 p-3 rounded-lg transition-all hover:text-blue-700"
+        >
+          <ReceiptText className="w-5 h-5" /> Supplier Purchases
         </Link>
         {/* <Link 
           to="/admin/expired-medicines" 

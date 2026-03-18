@@ -14,6 +14,7 @@ import PredictionReports from "./pages/PredictionReports";
 import DemandPrediction from "./pages/DemandPrediction";
 import ScrollToTop from "./components/ScrollToTop";
 import Suppliers from "./pages/Suppliers";
+import SupplierPurchases from "./pages/SupplierPurchases";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/coupons" element={<AdminCoupons />} />
             <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/supplier-purchases" element={<SupplierPurchases />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/predictions" element={<PredictionReports />} />
             <Route path="/demand-prediction" element={<DemandPrediction />} />

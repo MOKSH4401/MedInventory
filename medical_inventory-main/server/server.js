@@ -13,6 +13,7 @@ const reportRoutes = require("./routes/reportRoutes.js");
 const predictionRoutes = require("./routes/predictionRoutes.js");
 const mlRoutes = require("./routes/mlRoutes.js");
 const supplierRoutes = require("./routes/supplierRoutes.js");
+const supplierPurchaseRoutes = require("./routes/supplierPurchaseRoutes.js");
 const { markExpiredMedicines } = require("./controllers/expiredController.js");
 
 dotenv.config();
@@ -61,6 +62,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/predictions", predictionRoutes);
 app.use("/api/ml", mlRoutes);
 app.use("/api/suppliers", supplierRoutes);
+app.use("/api/supplier-purchases", supplierPurchaseRoutes);
 
 const PORT = process.env.PORT || 6000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
