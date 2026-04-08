@@ -5,6 +5,7 @@ import {
   Bar,
   XAxis,
   YAxis,
+  Label,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -128,11 +129,23 @@ const DemandPrediction = () => {
       {chartData.length > 0 && (
         <section className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Demand by Medicine</h2>
+          <p className="text-xs text-gray-500 mb-3">
+            X-axis: Medicine name | Y-axis: Predicted demand (units for next 30 days)
+          </p>
           <ResponsiveContainer width="100%" height={350}>
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name">
+                <Label value="Medicine" position="insideBottom" offset={-2} />
+              </XAxis>
+              <YAxis>
+                <Label
+                  value="Predicted Demand (Units)"
+                  angle={-90}
+                  position="insideLeft"
+                  style={{ textAnchor: "middle" }}
+                />
+              </YAxis>
               <Tooltip />
               <Bar dataKey="demand" fill="#6366f1" radius={[4, 4, 0, 0]} name="Predicted Demand" />
             </BarChart>

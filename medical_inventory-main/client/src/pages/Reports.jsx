@@ -5,6 +5,7 @@ import {
   Bar,
   XAxis,
   YAxis,
+  Label,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -148,11 +149,21 @@ const Reports = () => {
         </div>
         <div>
           <p className="text-sm text-gray-600 mb-2">Sales by date (last 7 days)</p>
+          <p className="text-xs text-gray-500 mb-3">X-axis: Date | Y-axis: Sales amount (₹)</p>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={salesChartData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
+              <XAxis dataKey="date">
+                <Label value="Date" position="insideBottom" offset={-2} />
+              </XAxis>
+              <YAxis>
+                <Label
+                  value="Sales (₹)"
+                  angle={-90}
+                  position="insideLeft"
+                  style={{ textAnchor: "middle" }}
+                />
+              </YAxis>
               <Tooltip formatter={(val) => [formatCurrency(val), "Sales"]} />
               <Bar dataKey="sales" fill="#22c55e" radius={[4, 4, 0, 0]} />
             </BarChart>

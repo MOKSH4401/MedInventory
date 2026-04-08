@@ -5,6 +5,7 @@ import {
   Bar,
   XAxis,
   YAxis,
+  Label,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -128,11 +129,21 @@ const AdminDashboard = () => {
       {/* Sales Chart */}
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-lg font-semibold mb-4">Sales by Date (Last 7 Days)</h2>
+        <p className="text-xs text-gray-500 mb-3">X-axis: Date | Y-axis: Sales amount (₹)</p>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
+            <XAxis dataKey="date">
+              <Label value="Date" position="insideBottom" offset={-2} />
+            </XAxis>
+            <YAxis>
+              <Label
+                value="Sales (₹)"
+                angle={-90}
+                position="insideLeft"
+                style={{ textAnchor: "middle" }}
+              />
+            </YAxis>
             <Tooltip formatter={(val) => [formatCurrency(val), "Sales"]} />
             <Bar dataKey="sales" fill="#3b82f6" radius={[4, 4, 0, 0]} />
           </BarChart>

@@ -7,9 +7,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createRoot } from 'react-dom/client';
 import axios from "axios";
+import { Minus, Plus } from "lucide-react";
 
 const CartPage = () => {
-  const { cart, fetchCart, removeFromCart, checkout } = useCart();
+  const { cart, fetchCart, removeFromCart, updateItemQuantity, checkout } = useCart();
   const { settings } = useSettings();
   const [buyerInfo, setBuyerInfo] = useState({
     buyerName: "",
@@ -159,6 +160,14 @@ const CartPage = () => {
     }
   };
 
+  const handleQuantityChange = async (itemId, delta) => {
+    try {
+      await updateItemQuantity(itemId, delta);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update quantity");
+    }
+  };
+
   const generateBill = async (purchaseData) => {
     try {
       // Create a temporary container
@@ -211,7 +220,25 @@ const CartPage = () => {
                 />
                 <div>
                   <p className="font-semibold">{item.name}</p>
-                  <p>Quantity: {item.quantity}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleQuantityChange(item.itemId, -1)}
+                      className="p-1 rounded border bg-gray-100 hover:bg-gray-200"
+                      aria-label={`Decrease ${item.name} quantity`}
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <p className="min-w-10 text-center">Qty: {item.quantity}</p>
+                    <button
+                      type="button"
+                      onClick={() => handleQuantityChange(item.itemId, 1)}
+                      className="p-1 rounded border bg-gray-100 hover:bg-gray-200"
+                      aria-label={`Increase ${item.name} quantity`}
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-4">

@@ -5,6 +5,7 @@ import {
   Line,
   XAxis,
   YAxis,
+  Label,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -177,11 +178,21 @@ const PredictionReports = () => {
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Calendar className="w-5 h-5 text-indigo-600" /> Sales Trend (Last 7 Days)
         </h2>
+        <p className="text-xs text-gray-500 mb-3">X-axis: Date | Y-axis: Sales amount (₹)</p>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={salesTrendData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
+            <XAxis dataKey="date">
+              <Label value="Date" position="insideBottom" offset={-2} />
+            </XAxis>
+            <YAxis>
+              <Label
+                value="Sales (₹)"
+                angle={-90}
+                position="insideLeft"
+                style={{ textAnchor: "middle" }}
+              />
+            </YAxis>
             <Tooltip formatter={(val) => [formatCurrency(val), "Sales"]} />
             <Line type="monotone" dataKey="sales" stroke="#6366f1" strokeWidth={2} dot={{ r: 4 }} />
           </LineChart>
@@ -191,12 +202,22 @@ const PredictionReports = () => {
       {/* Monthly Trend - BarChart */}
       <section className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold mb-4">Monthly Sales Trend</h2>
+        <p className="text-xs text-gray-500 mb-3">X-axis: Month | Y-axis: Sales amount (₹)</p>
         {monthlyTrendData.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={monthlyTrendData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
+              <XAxis dataKey="label">
+                <Label value="Month" position="insideBottom" offset={-2} />
+              </XAxis>
+              <YAxis>
+                <Label
+                  value="Sales (₹)"
+                  angle={-90}
+                  position="insideLeft"
+                  style={{ textAnchor: "middle" }}
+                />
+              </YAxis>
               <Tooltip formatter={(val) => [formatCurrency(val), "Sales"]} />
               <Legend />
               <Bar dataKey="sales" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Sales" />

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const API_BASE = "http://localhost:5000/api";
 
@@ -157,6 +158,14 @@ const SupplierPurchases = () => {
               </option>
             ))}
           </select>
+          <div className="flex items-center justify-end">
+            <Link
+              to="/suppliers"
+              className="px-3 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Add Supplier
+            </Link>
+          </div>
 
           <select
             name="itemId"
@@ -213,6 +222,9 @@ const SupplierPurchases = () => {
             onChange={onChange}
             className="p-2 border rounded"
           />
+          <p className="text-xs text-gray-500 -mt-2">
+            Expiry Date: medicine batch expiry date from supplier invoice.
+          </p>
 
           <input
             type="date"
@@ -221,6 +233,9 @@ const SupplierPurchases = () => {
             onChange={onChange}
             className="p-2 border rounded"
           />
+          <p className="text-xs text-gray-500 -mt-2">
+            Purchase Date: date when you bought this stock from supplier.
+          </p>
 
           <div className="md:col-span-2 flex justify-end">
             <button
@@ -236,6 +251,9 @@ const SupplierPurchases = () => {
 
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">Supplier-wise Total Purchase</h2>
+        <p className="text-xs text-gray-500 mb-3">
+          X-axis: Supplier name | Y-axis: Total purchase cost (₹)
+        </p>
         {loading ? (
           <p className="text-gray-500">Loading...</p>
         ) : summary.length === 0 ? (

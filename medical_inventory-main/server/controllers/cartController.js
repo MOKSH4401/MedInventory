@@ -163,6 +163,49 @@ const removeFromCart = async (req, res) => {
   }
 };
 
+const updateCartItemQuantity = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { delta } = req.body; // +1 or -1
+    const step = Number(delta);
+    if (![1, -1].includes(step)) {
+      return res.status(400).json({ message: "delta must be 1 or -1" });
+    }
+
+    const cart = await Cart.findOne();
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    const idx = cart.items.findIndex((i) => i.itemId.toString() === itemId);
+    if (idx === -1) return res.status(404).json({ message: "Item not in cart" });
+
+    const item = await Item.findById(itemId);
+    if (!item) return res.status(404).json({ message: "Item not found" });
+
+    if (step === 1) {
+      // Increase cart quantity by 1 -> reduce inventory by 1
+      if (item.quantity < 1) {
+        return res.status(400).json({ message: "Not enough stock available" });
+      }
+      cart.items[idx].quantity += 1;
+      item.quantity -= 1;
+    } else {
+      // Decrease cart quantity by 1 -> return 1 unit to inventory
+      cart.items[idx].quantity -= 1;
+      item.quantity += 1;
+      if (cart.items[idx].quantity <= 0) {
+        cart.items.splice(idx, 1);
+      }
+    }
+
+    cart.totalAmount = cart.items.reduce((total, it) => total + (it.price * it.quantity), 0);
+    await Promise.all([cart.save(), item.save()]);
+    return res.json(cart);
+  } catch (error) {
+    console.error("Update cart item quantity error:", error);
+    return res.status(500).json({ message: "Failed to update cart quantity" });
+  }
+};
+
 const checkout = async (req, res) => {
   try {
     const { buyerName, buyerPhone, buyerEmail, paymentMode, couponCode } = req.body;
@@ -420,6 +463,7 @@ module.exports = {
   addToCart,
   getCart,
   removeFromCart,
+  updateCartItemQuantity,
   checkout,
   createRazorpayOrder,
   verifyRazorpayPayment

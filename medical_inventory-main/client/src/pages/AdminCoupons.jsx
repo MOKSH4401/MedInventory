@@ -213,6 +213,9 @@ const AdminCoupons = () => {
             onChange={handleChange}
             className="p-2 border rounded"
           />
+          <p className="text-xs text-gray-500 md:col-span-2 -mt-2">
+            Date meaning: this is the coupon expiry date. After this date, the coupon cannot be used.
+          </p>
           <div className="md:col-span-2 flex justify-end">
             <button
               type="submit"
@@ -337,6 +340,9 @@ const AdminCoupons = () => {
                 className="w-full p-2 border rounded"
               />
               <p className="text-xs text-gray-500">Leave empty to remove expiry.</p>
+              <p className="text-xs text-gray-500">
+                This date is coupon expiry date (validity end date).
+              </p>
             </div>
 
             <div className="p-4 border-t flex justify-end gap-2">

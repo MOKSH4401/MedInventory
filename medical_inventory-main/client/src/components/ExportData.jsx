@@ -19,8 +19,11 @@ const ExportData = () => {
         <FileText className="w-6 h-6 text-blue-500" />
         Export Data
       </h2>
+      <p className="text-sm text-gray-600 mb-3">
+        Download inventory CSV containing: medicine name, current quantity, and expiry date.
+      </p>
       <button onClick={exportCSV} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-        Download CSV
+        Download Inventory CSV
       </button>
     </div>
   );

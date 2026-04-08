@@ -52,6 +52,20 @@ const useCart = create((set) => ({
     }
   },
 
+  updateItemQuantity: async (itemId, delta) => {
+    try {
+      const response = await axios.patch(`http://localhost:5000/api/cart/item/${itemId}/quantity`, {
+        delta,
+      });
+      const cartData = response.data?.cart ?? response.data;
+      set({ cart: cartData });
+      return cartData;
+    } catch (error) {
+      console.error("Error updating cart quantity:", error);
+      throw error;
+    }
+  },
+
   checkout: async (buyerInfo) => {
     try {
       await axios.post("http://localhost:5000/api/cart/checkout", buyerInfo);

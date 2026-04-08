@@ -5,6 +5,7 @@ import {
   Line,
   XAxis,
   YAxis,
+  Label,
   CartesianGrid,
   Tooltip,
   Legend,
@@ -69,11 +70,23 @@ const InventoryChart = () => {
       <p className="text-sm text-gray-500 mb-2">
         Last 6 months — Sales (₹ revenue) & Units Sold (restock indicator)
       </p>
+      <p className="text-xs text-gray-500 mb-3">
+        X-axis: Month | Y-axis: Sales amount (₹) and Units sold
+      </p>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
+          <XAxis dataKey="month">
+            <Label value="Month" position="insideBottom" offset={-2} />
+          </XAxis>
+          <YAxis>
+            <Label
+              value="Sales (₹) / Units Sold"
+              angle={-90}
+              position="insideLeft"
+              style={{ textAnchor: "middle" }}
+            />
+          </YAxis>
           <Tooltip
             formatter={(value, name) => [
               name === "sales" ? `₹${Number(value).toLocaleString()}` : value,
